@@ -75,29 +75,39 @@ xrdp_info() {
 }
 # Function to install and configure XRDP for the current user
 setup_xrdp() {
+  local desktop_env="$1"
+  local xsession_file="/home/$USER/.xsession"
 
   log INFO "Updating package list..."
   if ! sudo apt update -y; then
-      log ERROR "Failed to update package list."
+      log ERROR "Failed to update package list.  Please check your internet connection."
       exit 1
   fi
 
-  log INFO "Installing XRDP and XFCE..."
-  if ! sudo apt install -y xrdp xfce4 xfce4-goodies; then
-      log ERROR "Failed to install XRDP and XFCE."
+  log INFO "Installing XRDP and ${desktop_env// /, }..."
+  if ! sudo apt install -y xrdp "$desktop_env"; then
+      log ERROR "Failed to install XRDP and chosen desktop environment. Check your internet connection and ensure 'apt' has sufficient permissions."
       exit 1
   fi
 
   log INFO "Enabling and starting the XRDP service..."
-  if ! sudo systemctl enable xrdp --now || ! sudo systemctl is-active xrdp; then
-      log ERROR "Failed to enable/start XRDP service."
+  if ! sudo systemctl enable xrdp --now; then
+      log ERROR "Failed to enable XRDP service."
       exit 1
   fi
+  if ! sudo systemctl is-active xrdp; then
+      log WARN "XRDP service might not be active yet. Please check its status manually."
+  fi
 
-  log INFO "Creating XFCE session for $USER..."
-  if ! sudo sh -c "echo 'xfce4-session' > /home/$USER/.xsession" || ! sudo chown "$USER":"$USER" "/home/$USER/.xsession"; then
-      log ERROR "Failed to create XFCE session. Please manually create /home/$USER/.xsession and add the line 'xfce4-session'."
-      exit 1
+  # Conditional session setup only for XFCE
+  if [[ "$desktop_env" == *"xfce4"* ]]; then
+    log INFO "Creating XFCE session file for $USER..."
+    if ! sudo sh -c "echo 'xfce4-session' > \"$xsession_file\"" || ! sudo chown "$USER":"$USER" "$xsession_file"; then
+        log ERROR "Failed to create or configure XFCE session file. Please manually create '$xsession_file' and add the line 'xfce4-session'.  You may need to log out and back in for changes to take effect."
+        #Exit only if critical failure to create file, allows rest of setup to continue if possible.
+        #exit 1 
+    fi
+    log INFO "XFCE session file created successfully. You may need to log out and back in for the changes to take effect."
   fi
 
   log INFO "Checking XRDP status..."
@@ -105,6 +115,7 @@ setup_xrdp() {
   log INFO "XRDP daemon is: ${status##*Active: }"
 
   log INFO "XRDP setup is complete for user $USER. You can now connect to this machine via RDP using the IP address and username '$USER'."
+  log INFO "You may need to log out and back in for changes to take effect."
 
   # Show xrdp info for client
   xrdp_info
@@ -117,29 +128,35 @@ interactive_menu() {
         printf "${GREEN}Welcome to the XRDP Speed Tool!${NC}\n\n"
         echo "What would you like to do?"
         echo
-        echo "1. Set up XRDP"
-        echo "2. Show XRDP client steps"
-        echo "3. Exit"
+        echo "1. Set up XFCE Basic XRDP"
+        echo "2. Set up Ubuntu Desktop XRDP"
+        echo "3. Show XRDP client steps"
+        echo "4. Exit"
         echo
-        read -p "Please enter your choice [1-3]: " choice
+        read -p "Please enter your choice [1-4]: " choice
 
         case $choice in
             1)
-                log INFO "Setting up XRDP."
-                setup_xrdp
+                log INFO "Setting up XFCE Basic XRDP."
+                setup_xrdp "xfce4 xfce4-goodies"
                 break
                 ;;
             2)
+                log INFO "Setting up Ubuntu Desktop XRDP."
+                setup_xrdp "ubuntu-desktop"
+                break
+                ;;
+            3)
                 log INFO "Showing steps to set up XRDP on the client..."
                 xrdp_info
                 read -n 1 -s -r -p "Press ENTER to return to main menu..."
                 ;;
-            3)
+            4)
                 log INFO "Exiting interactive menu..."
                 break
                 ;;
             *)
-                log WARN "Invalid choice. Please enter a number between 1 and 2."
+                log WARN "Invalid choice. Please enter a number between 1 and 4."
                 ;;
         esac
     done
