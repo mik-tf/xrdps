@@ -71,9 +71,9 @@ xrdp_info() {
     echo "   * macOS: Download the Microsoft Remote Desktop app from the Mac App Store"
     echo "   * Linux: Download the Remmina client"
     echo "3. Open the Remote Desktop Client and enter:"
-    echo "   * Computer: Your VM's IP address"
+    echo "   * Computer: VM IP address"
     echo "   * Username: $USER"
-    echo "   * Password: Your user's password"
+    echo "   * Password: $USER's password"
     echo "4. Connect!"
     echo
 }
