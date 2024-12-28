@@ -142,12 +142,18 @@ interactive_menu() {
         read -p "Please enter your choice [1-4]: " choice
 
         case $choice in
-            1) setup_xrdp xfce ;;
-            2) setup_xrdp ubuntu ;;
+            1) 
+                setup_xrdp xfce
+                break
+                ;;
+            2)  
+                setup_xrdp ubuntu
+                break
+                ;;
             3) 
-               xrdp_info 
-               read -n 1 -s -r -p "Press ENTER to return to main menu..."
-               ;;
+                xrdp_info 
+                read -n 1 -s -r -p "Press ENTER to return to main menu..."
+                ;;
             4) log INFO "Exiting interactive menu..."; break ;;
             *) log WARN "Invalid choice. Please enter a number between 1 and 4." ;;
         esac
