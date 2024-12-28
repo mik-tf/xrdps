@@ -139,7 +139,7 @@ interactive_menu() {
         echo "2. Set up XRDP with Ubuntu GUI"
         echo "3. Show XRDP client connection steps"
         echo "4. Exit"
-        read -p "Please enter your choice [1-6]: " choice
+        read -p "Please enter your choice [1-4]: " choice
 
         case $choice in
             1) setup_xrdp xfce ;;
