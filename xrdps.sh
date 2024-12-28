@@ -91,13 +91,23 @@ setup_xrdp() {
         return 1
     fi
 
-    log INFO "Installing XRDP and ${desktop_env^^}..."
+    # Function to check if a package is installed
+    is_installed() {
+        dpkg -l "$1" 2>/dev/null | grep -q "^ii"
+    }
+
     if [[ "$desktop_env" == "xfce" ]]; then
-      sudo apt install -y xrdp xfce4 xfce4-goodies
-      session="xfce4-session"
+        if ! is_installed "xrdp" || ! is_installed "xfce4" || ! is_installed "xfce4-goodies"; then
+            log INFO "Attempting to install missing XFCE components..."
+            sudo apt install -y xrdp xfce4 xfce4-goodies || log WARN "Package installation failed, continuing anyway..."
+        fi
+        session="xfce4-session"
     elif [[ "$desktop_env" == "ubuntu" ]]; then
-      sudo apt install -y xrdp ubuntu-desktop
-      session="gnome-session"
+        if ! is_installed "xrdp" || ! is_installed "ubuntu-desktop"; then
+            log INFO "Attempting to install missing Ubuntu Desktop components..."
+            sudo apt install -y xrdp ubuntu-desktop || log WARN "Package installation failed, continuing anyway..."
+        fi
+        session="gnome-session"
     fi
 
     log INFO "Enabling and starting the XRDP service..."
