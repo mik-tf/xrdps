@@ -95,7 +95,6 @@ setup_xrdp() {
     if [[ "$desktop_env" == "xfce" ]]; then
       sudo apt install -y xrdp xfce4 xfce4-goodies
       session="xfce4-session"
-    fi
     elif [[ "$desktop_env" == "ubuntu" ]]; then
       sudo apt install -y xrdp ubuntu-desktop
       session="gnome-session"
