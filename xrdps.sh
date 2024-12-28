@@ -55,6 +55,24 @@ uninstall() {
   fi
 }
 
+xrdp_info() {
+
+  # Client-side instruction
+  echo
+  echo "To connect remotely:"
+  echo "1. Find your VM's address. You can usually find this in your cloud provider's control panel or by running 'ip addr show' on the VM. For Tailscale use 'tailscale ip'."
+  echo "2. Install a Remote Desktop Client:"
+  echo "   * Windows: Download the Microsoft Remote Desktop app from the Microsoft Store: [https://apps.microsoft.com/store/detail/microsoft-remote-desktop/9WZDNCRFJ3PS](https://apps.microsoft.com/store/detail/microsoft-remote-desktop/9WZDNCRFJ3PS)"
+  echo "   * macOS: Download the Microsoft Remote Desktop app from the Mac App Store: [https://apps.apple.com/ca/app/microsoft-remote-desktop/id1295203466](https://apps.apple.com/ca/app/microsoft-remote-desktop/id1295203466)"
+  echo "   * Linux: Use a client like Remmina: [https://remmina.org/](https://remmina.org/)"
+  echo "3. Open the Remote Desktop Client and enter:"
+  echo "   * Computer: Your VM's address"
+  echo "   * Username: $USER"
+  echo "   * Password: Your user's password"
+  echo "4. Connect! You should now be able to access your remote desktop."
+  echo
+
+}
 # Function to install and configure XRDP for the current user
 setup_xrdp() {
 
@@ -88,36 +106,35 @@ setup_xrdp() {
 
   log INFO "XRDP setup is complete for user $USER. You can now connect to this machine via RDP using the IP address and username '$USER'."
 
-  # Client-side instruction
-  echo "To connect remotely:"
-  echo "1. **Find your VM's address.** You can usually find this in your cloud provider's control panel or by running 'ip addr show' on the VM. For Tailscale use 'tailscale ip'."
-  echo "2. **Install a Remote Desktop Client:**"
-  echo "   * **Windows:** Download the Microsoft Remote Desktop app from the Microsoft Store: [https://apps.microsoft.com/store/detail/microsoft-remote-desktop/9WZDNCRFJ3PS](https://apps.microsoft.com/store/detail/microsoft-remote-desktop/9WZDNCRFJ3PS)"
-  echo "   * **macOS:** Download the Microsoft Remote Desktop app from the Mac App Store: [https://apps.apple.com/ca/app/microsoft-remote-desktop/id1295203466](https://apps.apple.com/ca/app/microsoft-remote-desktop/id1295203466)"
-  echo "   * **Linux:** Use a client like Remmina: [https://remmina.org/](https://remmina.org/)"
-  echo "3. **Open the Remote Desktop Client and enter:**"
-  echo "   * **Computer:** Your VM's address"
-  echo "   * **Username:** $USER"
-  echo "   * **Password:** Your user's password"
-  echo "4. **Connect!** You should now be able to access your remote desktop."
+  # Show xrdp info for client
+  xrdp_info
 }
 
 interactive_menu() {
     log INFO "Entering interactive menu..."
     while true; do
         echo
+        printf "${GREEN}Welcome to the XRDP Speed Tool!${NC}\n\n"
         echo "What would you like to do?"
+        echo
         echo "1. Set up XRDP"
-        echo "2. Exit"
-        read -p "Please enter your choice [1-2]: " choice
+        echo "2. Show XRDP client steps"
+        echo "3. Exit"
+        echo
+        read -p "Please enter your choice [1-3]: " choice
 
         case $choice in
             1)
+                log INFO "Setting up XRDP."
                 setup_xrdp
-                log INFO "Setup for XRDP for $tool_name is complete. Exiting interactive menu..."
                 break
                 ;;
             2)
+                log INFO "Showing steps to set up XRDP on the client..."
+                xrdp_info
+                read -n 1 -s -r -p "Press ENTER to return to main menu..."
+                ;;
+            3)
                 log INFO "Exiting interactive menu..."
                 break
                 ;;
