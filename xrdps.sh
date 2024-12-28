@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Tool name
-tool_name="xrdp"
+tool_name="xrdps"
 
 # Use tput for portable color codes
 RED=$(tput setaf 1)
