@@ -96,7 +96,7 @@ setup_xrdp() {
         sudo apt install -y xrdp xfce4 xfce4-goodies
         session="xfce4-session"
     elif [[ "$desktop_env" == "ubuntu" ]]; then
-        sudo apt install -y xrdp ubuntu-desktop; then
+        sudo apt install -y xrdp ubuntu-desktop
         log ERROR "Failed to install XRDP and Ubuntu Desktop."
         session="gnome-session"
     fi
