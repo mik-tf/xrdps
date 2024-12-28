@@ -63,12 +63,13 @@ uninstall() {
 # Function to provide client-side connection instructions
 xrdp_info() {
     echo
-    echo "To connect remotely:"
-    echo "1. Find your VM's address (e.g., using 'ip addr show' or your cloud provider's console)."
+    echo "The setup is now complete. To connect remotely:"
+    echo
+    echo "1. Find the VM IP address (e.g., using 'ip addr show' or 'tailscale ip' with Tailscale)."
     echo "2. Install a Remote Desktop Client:"
-    echo "   * Windows: Microsoft Remote Desktop app (Microsoft Store)"
-    echo "   * macOS: Microsoft Remote Desktop app (Mac App Store)"
-    echo "   * Linux: Remmina (recommended) or other RDP clients"
+    echo "   * Windows: Download the Microsoft Remote Desktop app from the Microsoft Store"
+    echo "   * macOS: Download the Microsoft Remote Desktop app from the Mac App Store"
+    echo "   * Linux: Download the Remmina client"
     echo "3. Open the Remote Desktop Client and enter:"
     echo "   * Computer: Your VM's IP address"
     echo "   * Username: $USER"
